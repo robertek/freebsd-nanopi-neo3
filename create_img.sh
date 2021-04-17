@@ -1,13 +1,16 @@
 #!/bin/sh -x
 
-FREEBSD_VER="13.0-RC2"
+FREEBSD_VER="13.0-RELEASE"
+#FREEBSD_VER="14.0-CURRENT"
+FREEBSD_BRANCH="releases"
+#FREEBSD_BRANCH="snapshots"
 UBOOT_VER="21.02.3"
 POOL="nanopool"
 HOSTNAME="nanopi"
 PUB_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAuZYFW6wzyEzZpMwjBmqRgAQgsVjrxcAvZEyFN93Bs+WwwI8snVAi5hzD7qGb9CldiLOL7ON1dds0kSYJAVKEvgXJd9HXJi3RPuVr72REmOakgSJStGtAb2DqaOny4hDi8NkBu9rWs1lFJftugYz+RVU4EjdTjRZ0ZdIpZyeoSSass8Lby60AxULzhEXEZCse1Ge+lKgcWHWHuNuo+CVQIXSDfmzCCsUqu8KntAkSBCY8JiWKEjS6Ju+rD7wiG/ktdbq+EWfQmryInYT4SWMkK1z0wQ9GCnVXhm13q2kHY3td7Xk/klXEwrc+zDhsR5YIdwxmKF2S7wW5wZ6+ob7Wdw=="
 
 UBOOT_MIRROR="https://mirrors.dotsrc.org/armbian-apt/pool/main/l/linux-u-boot-nanopineo3-current"
-FREEBSD_MIRROR="https://download.freebsd.org/ftp/releases/arm64"
+FREEBSD_MIRROR="https://download.freebsd.org/ftp/$FREEBSD_BRANCH/arm64"
 DEV="md99"
 DATASET="rpool/nanopi"
 IMG="nanopi-neo3-$FREEBSD_VER.img"
@@ -73,6 +76,7 @@ create_pool() {
 	zfs create $POOL/DATA/usr/home
 	zfs create $POOL/DATA/usr/obj
 	zfs create $POOL/DATA/usr/src
+	zfs create $POOL/DATA/usr/ports
 
 	zfs create $POOL/DATA/var/audit
 	zfs create $POOL/DATA/var/cache
@@ -132,6 +136,10 @@ geom_label_load="yes"
 # zfs
 zfs_load="yes"
 opensolaris_load="yes"
+vfs.zfs.prefetch_disable=1
+
+# usb3
+fdt_overlays="rk3328-dwc3.dtbo"
 EOF
 	
 	# permit ssh root login with key
